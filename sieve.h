@@ -15,6 +15,12 @@ sieve(size_t max){
 		 *	
 		 *	Note that this function returns a structure allocated on the heap,
 		 *	make sure to free it appropriately.
+		 *
+		 *	BIT REPRESENTATION VERSION: As the structure is changed to represent
+		 *	numbers internally as bits rather than bytes, it is intended that
+		 *	the library remain unchanged from a user/interface perspective; as
+		 *	such, "sieve_test.c" should remain unchanged between the vanilla and
+		 *	bitwise versions.
 		 */
 		const unsigned char PRIME    = 1;
 		const unsigned char NOTPRIME = 0;
