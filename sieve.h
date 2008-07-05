@@ -15,6 +15,11 @@ sieve(size_t max){
 		 *	
 		 *	Note that this function returns a structure allocated on the heap,
 		 *	make sure to free it appropriately.
+		 *
+		 *	MULTITHREAD VERSION: As SMP capability is added, my intention is for
+		 *	the vanilla and pthread versions of this library be identical from a
+		 *	user/interface perspective; as such, "sieve_test.c" should be
+		 *	identical in all branches.
 		 */
 		const unsigned char PRIME    = 1;
 		const unsigned char NOTPRIME = 0;
