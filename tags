@@ -6,13 +6,18 @@
 !_TAG_PROGRAM_VERSION	5.7	//
 _list	list.h	/^typedef struct _list{$/;"	s
 _node	list.h	/^typedef struct _node {$/;"	s
+arg_set	sieve.h	/^struct arg_set{$/;"	s
+blockptr	sieve.h	/^		sieve_t blockptr;$/;"	m	struct:arg_set
 data	list.h	/^		void *data;$/;"	m	struct:_node
 head	list.h	/^		node head;$/;"	m	struct:_list
 list	list.h	/^} list;$/;"	t	typeref:struct:_list
 main	sieve_test.c	/^int main(int argc, char **argv){$/;"	f
+max	sieve.h	/^		size_t max;$/;"	m	struct:arg_set
+min	sieve.h	/^		size_t min;$/;"	m	struct:arg_set
 next	list.h	/^		_node *next;$/;"	m	struct:_node
 node	list.h	/^} node;$/;"	t	typeref:struct:_node
 print_sieve	sieve_test.c	/^void print_sieve(sieve_t s, size_t max){$/;"	f
 sieve	sieve.h	/^sieve(size_t max){$/;"	f
 sieve_t	sieve.h	/^typedef unsigned char* sieve_t;$/;"	t
 size	list.h	/^		size_t size;$/;"	m	struct:_list
+worker	sieve.h	/^worker(void *args){$/;"	f
