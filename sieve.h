@@ -12,12 +12,13 @@ typedef unsigned char* sieve_t;
 struct arg_set{
 		size_t min;
 		size_t max;
-		size_t smax;
+		size_t sieved_num;
 		sieve_t dataptr;
 };
 
 void *worker(void *args);
 void divy_work(struct arg_set *args, size_t threadnum, size_t max);
+size_t correct_min(size_t sieved_num, size_t min);
 
 sieve_t
 sieve(size_t max){
@@ -39,6 +40,7 @@ sieve(size_t max){
 
 		pthread_t threads[NUM_THREADS];
 		struct arg_set args;
+		size_t smax = (size_t)ceil(sqrt((double)max));
 
 		sieve_t numbers = malloc((max+1) * sizeof(unsigned char));
 		if(NULL == numbers){
@@ -50,23 +52,28 @@ sieve(size_t max){
 		memset(numbers, PRIME, max+1);
 		numbers[0] = NOTPRIME;//remove 0, as it isn't prime
 		numbers[1] = NOTPRIME;//ditto  1
+		args.dataptr = numbers;
 
-		//spawn our workers
-		for(size_t i=0; i<NUM_THREADS; ++i){
-				args.smax = (size_t)ceil(sqrt((double)max));
-				args.dataptr = numbers;
-				divy_work(&args, i, max);
+		//sieve away - note inner loop parallelized
+		for(size_t i = 0; i < smax; ++i){
+				if (numbers[i] != NOTPRIME){
 
-				int ret = pthread_create(&threads[i], NULL, worker, (void*)&args);
-				if(0 != ret){
-						perror("Couldn't spawn thread!");
-						exit(EXIT_FAILURE);
+						//spawn our workers
+						args.sieved_num = i;
+						for(size_t i=0; i<NUM_THREADS; ++i){
+								divy_work(&args, i, max);
+								int ret = pthread_create(&threads[i], NULL,
+											   	         worker, (void*)&args);
+								if(0 != ret){
+										perror("Couldn't spawn thread!");
+										exit(EXIT_FAILURE);
+								}
+						}
+						//wait for our workers to finish
+						for(size_t i=0; i<NUM_THREADS; ++i){
+								pthread_join(threads[i], NULL);
+						}
 				}
-		}
-
-		//wait for our workers to finish
-		for(size_t i=0; i<NUM_THREADS; ++i){
-				pthread_join(threads[i], NULL);
 		}
 
 		return numbers;
@@ -80,16 +87,11 @@ worker(void *args){
 		struct arg_set *myargs = (struct arg_set*)args;
 		size_t min  = myargs->min;
 		size_t max  = myargs->max;
-		size_t smax = myargs->smax;
+		size_t sieved_num = myargs->sieved_num;
 		sieve_t numbers = myargs->dataptr;
 
-		for(size_t i = 0; i < smax; ++i){
-				if (numbers[i] != NOTPRIME){
-						for(size_t j = i+i; j<max; j += i){
-								while (j<min) j += i; 
-								numbers[j] = NOTPRIME;
-						}
-				}
+		for(size_t j = correct_min(sieved_num, min); j<max; j += sieved_num){
+				numbers[j] = NOTPRIME;
 		}
 
 		pthread_exit(NULL);
@@ -103,8 +105,12 @@ divy_work(struct arg_set *args, size_t threadnum, size_t max){
 		}else if (1 == threadnum){
 				args->min = max/2;
 				args->max = max+1;
-		}else{
-				fprintf(stderr, "Wrong threadnum passed somehow!\n");
-				exit(EXIT_FAILURE);
 		}
+}
+
+size_t correct_min(size_t sieved_num, size_t min){
+		if ( (sieved_num + sieved_num) >= min)
+				return sieved_num + sieved_num;
+		else
+				return (min/sieved_num) * sieved_num;
 }
