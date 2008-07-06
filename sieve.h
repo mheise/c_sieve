@@ -8,13 +8,16 @@ const unsigned char PRIME    = 1;
 const unsigned char NOTPRIME = 0;
 
 typedef unsigned char* sieve_t;
-void *worker(void *args);
 
 struct arg_set{
 		size_t min;
 		size_t max;
-		sieve_t blockptr;
+		size_t smax;
+		sieve_t dataptr;
 };
+
+void *worker(void *args);
+void divy_work(struct arg_set *args, size_t threadnum, size_t max);
 
 sieve_t
 sieve(size_t max){
@@ -50,9 +53,9 @@ sieve(size_t max){
 
 		//spawn our workers
 		for(size_t i=0; i<NUM_THREADS; ++i){
-				args.min = 0;
-				args.max = max;
-				args.blockptr = numbers;
+				args.smax = (size_t)ceil(sqrt((double)max));
+				args.dataptr = numbers;
+				divy_work(&args, i, max);
 
 				int ret = pthread_create(&threads[i], NULL, worker, (void*)&args);
 				if(0 != ret){
@@ -75,17 +78,33 @@ worker(void *args){
 		 *	is asynchronous/mutex-free by design	*/
 
 		struct arg_set *myargs = (struct arg_set*)args;
-		int min = myargs->min;
-		int max = myargs->max;
-		sieve_t numbers = myargs->blockptr;
+		size_t min  = myargs->min;
+		size_t max  = myargs->max;
+		size_t smax = myargs->smax;
+		sieve_t numbers = myargs->dataptr;
 
-		for(size_t i = min; i < (size_t)ceil(sqrt((double)max)); ++i){
+		for(size_t i = 0; i < smax; ++i){
 				if (numbers[i] != NOTPRIME){
-						for(size_t j = i+i; j<max+1; j += i){
+						for(size_t j = i+i; j<max; j += i){
+								while (j<min) j += i; 
 								numbers[j] = NOTPRIME;
 						}
 				}
 		}
 
 		pthread_exit(NULL);
+}
+
+void 
+divy_work(struct arg_set *args, size_t threadnum, size_t max){
+		if (0 == threadnum){
+				args->min = 0;
+				args->max = max/2+1;
+		}else if (1 == threadnum){
+				args->min = max/2;
+				args->max = max+1;
+		}else{
+				fprintf(stderr, "Wrong threadnum passed somehow!\n");
+				exit(EXIT_FAILURE);
+		}
 }
