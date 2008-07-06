@@ -4,6 +4,8 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.7	//
+NOTPRIME	sieve.h	/^const unsigned char NOTPRIME = 0;$/;"	v
+PRIME	sieve.h	/^const unsigned char PRIME    = 1;$/;"	v
 _list	list.h	/^typedef struct _list{$/;"	s
 _node	list.h	/^typedef struct _node {$/;"	s
 arg_set	sieve.h	/^struct arg_set{$/;"	s
