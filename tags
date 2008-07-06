@@ -10,6 +10,7 @@ data	list.h	/^		void *data;$/;"	m	struct:_node
 head	list.h	/^		node head;$/;"	m	struct:_list
 list	list.h	/^} list;$/;"	t	typeref:struct:_list
 main	sieve_test.c	/^int main(int argc, char **argv){$/;"	f
+main	sieve_unit_test.c	/^int main(void){$/;"	f
 next	list.h	/^		_node *next;$/;"	m	struct:_node
 node	list.h	/^} node;$/;"	t	typeref:struct:_node
 print_sieve	sieve_test.c	/^void print_sieve(sieve_t s, size_t max){$/;"	f
