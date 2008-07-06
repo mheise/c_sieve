@@ -4,6 +4,9 @@
 #include <errno.h>
 #include <pthread.h>
 
+const unsigned char PRIME    = 1;
+const unsigned char NOTPRIME = 0;
+
 typedef unsigned char* sieve_t;
 void *worker(void *args);
 
@@ -11,7 +14,7 @@ struct arg_set{
 		size_t min;
 		size_t max;
 		sieve_t blockptr;
-}
+};
 
 sieve_t
 sieve(size_t max){
@@ -29,11 +32,10 @@ sieve(size_t max){
 		 *	user/interface perspective; as such, "sieve_test.c" should be
 		 *	identical in all branches.
 		 */
-		const unsigned char PRIME    = 1;
-		const unsigned char NOTPRIME = 0;
 		const unsigned char NUM_THREADS = 2;
 
 		pthread_t threads[NUM_THREADS];
+		struct arg_set args;
 
 		sieve_t numbers = malloc((max+1) * sizeof(unsigned char));
 		if(NULL == numbers){
@@ -48,11 +50,20 @@ sieve(size_t max){
 
 		//spawn our workers
 		for(size_t i=0; i<NUM_THREADS; ++i){
-				ret = pthread_create(&threads[i], NULL, worker, (void*)args);//XXX args
+				args.min = 0;
+				args.max = max;
+				args.blockptr = numbers;
+
+				int ret = pthread_create(&threads[i], NULL, worker, (void*)&args);
 				if(0 != ret){
 						perror("Couldn't spawn thread!");
 						exit(EXIT_FAILURE);
 				}
+		}
+
+		//wait for our workers to finish
+		for(size_t i=0; i<NUM_THREADS; ++i){
+				pthread_join(threads[i], NULL);
 		}
 
 		return numbers;
@@ -63,10 +74,10 @@ worker(void *args){
 		/*	Note that access in all worker threads to the main numbers vector
 		 *	is asynchronous/mutex-free by design	*/
 
-		size_t  min = (size_t)args[0];
-		size_t  max = (size_t)args[1];
-		sieve_t blockptr = (sieve_t)args[2];
-
+		struct arg_set *myargs = (struct arg_set*)args;
+		int min = myargs->min;
+		int max = myargs->max;
+		sieve_t numbers = myargs->blockptr;
 
 		for(size_t i = min; i < (size_t)ceil(sqrt((double)max)); ++i){
 				if (numbers[i] != NOTPRIME){
@@ -75,5 +86,6 @@ worker(void *args){
 						}
 				}
 		}
-		return;
+
+		pthread_exit(NULL);
 }
