@@ -1,8 +1,7 @@
 Documentation for ~/src/euler/inc/sieve*
 
 Contact info:  kaesees@gmail.com
-Last Update:   06 Jul 2008
-
+Last Update:   07 Jul 2008
 
 
 USAGE:
@@ -20,9 +19,9 @@ free(my_sieve);
 
 COMPILE NOTES:
 The sieve library is written using C99 features, and needs the standard C math
-routines linked.
+routines linked, as well at POSIX Thread routines.
 
-ex. 'gcc -std=c99 -lm -OBIGNUM my_sieve_prog.c'
+ex. 'gcc -std=c99 -lm -pthread -OBIGNUM my_sieve_prog.c'
 
 
 PERFORMANCE:
