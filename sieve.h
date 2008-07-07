@@ -25,7 +25,7 @@ sieve(size_t max){
 		const unsigned char PRIME    = 1;
 		const unsigned char NOTPRIME = 0;
 
-		sieve_t numbers = malloc((max+1) * sizeof(unsigned char));
+		sieve_t numbers = malloc((max+1) * sizeof(*numbers));
 		if(NULL == numbers){
 				perror("Couldn't malloc enough for sieve");
 				exit(EXIT_FAILURE);
