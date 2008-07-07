@@ -3,7 +3,8 @@
 #include <math.h>
 #include <errno.h>
 
-typedef unsigned char* sieve_t;
+typedef unsigned char sievemember_t;
+typedef sievemember_t*  sieve_t;
 
 sieve_t
 sieve(size_t max){
@@ -22,10 +23,10 @@ sieve(size_t max){
 		 *	such, "sieve_test.c" should remain unchanged between the vanilla and
 		 *	bitwise versions.
 		 */
-		const unsigned char PRIME    = 1;
-		const unsigned char NOTPRIME = 0;
+		const sievemember_t PRIME    = 1;
+		const sievemember_t NOTPRIME = 0;
 
-		sieve_t numbers = malloc((max+1) * sizeof(*numbers));
+		sieve_t numbers = malloc((max+1) * sizeof(sievemember_t));
 		if(NULL == numbers){
 				perror("Couldn't malloc enough for sieve");
 				exit(EXIT_FAILURE);
