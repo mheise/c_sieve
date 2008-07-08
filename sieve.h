@@ -4,6 +4,8 @@
 #include <errno.h>
 #include <pthread.h>
 
+#define NUM_THREADS 2
+
 typedef unsigned char sievemember_t;
 typedef sievemember_t*  sieve_t;
 
@@ -37,7 +39,6 @@ sieve(size_t max){
 		 *	user/interface perspective; as such, "sieve_test.c" should be
 		 *	identical in all branches.
 		 */
-		const unsigned char NUM_THREADS = 2;
 
 		pthread_t threads[NUM_THREADS];
 		struct arg_set args;
@@ -99,13 +100,11 @@ worker(void *args){
 
 void 
 divy_work(struct arg_set *args, size_t threadnum, size_t max){
-		if (0 == threadnum){
-				args->min = 0;
-				args->max = max/2+1;
-		}else if (1 == threadnum){
-				args->min = max/2;
-				args->max = max+1;
-		}
+		args->min = (max/NUM_THREADS) * threadnum;
+		args->max = (max/NUM_THREADS) * (threadnum + 1);
+
+		if (NUM_THREADS == (threadnum + 1))
+				++(args->max);
 }
 
 size_t
