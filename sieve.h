@@ -18,10 +18,12 @@ sieve(size_t max){
 		 *	make sure to free it appropriately.
 		 *
 		 *	BIT REPRESENTATION VERSION: As the structure is changed to represent
-		 *	numbers internally as bits rather than bytes, it is intended that
-		 *	the library remain unchanged from a user/interface perspective; as
-		 *	such, "sieve_test.c" should remain unchanged between the vanilla and
-		 *	bitwise versions.
+		 *	numbers internally as bits rather than bytes, it was intended that
+		 *	the library would remain unchanged from a user/interface
+		 *	perspective, and that "sieve_test.c" would remain unchanged between
+		 *	the vanilla and bitwise versions.  However, due to the impossibility
+		 *	of overloading operator[] in straight C, changed had to be made;
+		 *	macros were defined to alleviate this situation somewhat.
 		 */
 		const sievemember_t PRIME    = 1;
 		const sievemember_t NOTPRIME = 0;
@@ -34,7 +36,6 @@ sieve(size_t max){
 
 		//assume all numbers are prime before sieving
 		memset(numbers, PRIME, max+1);
-
 		numbers[0] = NOTPRIME;//remove 0, as it isn't prime
 		numbers[1] = NOTPRIME;//ditto  1
 
