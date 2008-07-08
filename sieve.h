@@ -4,10 +4,11 @@
 #include <errno.h>
 #include <pthread.h>
 
-const unsigned char PRIME    = 1;
-const unsigned char NOTPRIME = 0;
+typedef unsigned char sievemember_t;
+typedef sievemember_t*  sieve_t;
 
-typedef unsigned char* sieve_t;
+const sievemember_t PRIME    = 1;
+const sievemember_t NOTPRIME = 0;
 
 struct arg_set{
 		size_t min;
@@ -42,7 +43,7 @@ sieve(size_t max){
 		struct arg_set args;
 		size_t smax = (size_t)ceil(sqrt((double)max));
 
-		sieve_t numbers = malloc((max+1) * sizeof(unsigned char));
+		sieve_t numbers = malloc((max+1) * sizeof(sievemember_t));
 		if(NULL == numbers){
 				perror("Couldn't malloc enough for sieve");
 				exit(EXIT_FAILURE);
@@ -57,13 +58,12 @@ sieve(size_t max){
 		//sieve away - note inner loop parallelized
 		for(size_t i = 0; i < smax; ++i){
 				if (numbers[i] != NOTPRIME){
-
 						//spawn our workers
 						args.sieved_num = i;
 						for(size_t i=0; i<NUM_THREADS; ++i){
 								divy_work(&args, i, max);
 								int ret = pthread_create(&threads[i], NULL,
-											   	         worker, (void*)&args);
+												worker, (void*)&args);
 								if(0 != ret){
 										perror("Couldn't spawn thread!");
 										exit(EXIT_FAILURE);
@@ -108,9 +108,10 @@ divy_work(struct arg_set *args, size_t threadnum, size_t max){
 		}
 }
 
-size_t correct_min(size_t sieved_num, size_t min){
-		if ( (sieved_num + sieved_num) >= min)
-				return sieved_num + sieved_num;
-		else
-				return (min/sieved_num) * sieved_num;
-}
+size_t
+		correct_min(size_t sieved_num, size_t min){
+				if ( (sieved_num + sieved_num) >= min)
+						return sieved_num + sieved_num;
+				else
+						return (min/sieved_num) * sieved_num;
+		}
