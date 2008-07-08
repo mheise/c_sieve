@@ -109,9 +109,10 @@ divy_work(struct arg_set *args, size_t threadnum, size_t max){
 }
 
 size_t
-		correct_min(size_t sieved_num, size_t min){
-				if ( (sieved_num + sieved_num) >= min)
-						return sieved_num + sieved_num;
-				else
-						return (min/sieved_num) * sieved_num;
+correct_min(size_t sieved_num, size_t min){
+		if ( (sieved_num + sieved_num) >= min){
+				return sieved_num + sieved_num;
+		}else{
+				return (min/sieved_num) * sieved_num;
 		}
+}
