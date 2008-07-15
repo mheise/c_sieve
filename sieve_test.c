@@ -6,7 +6,7 @@
 void print_sieve(sieve_t s, uint64_t max){
 		for(uint64_t i=0; i<max+1; ++i){
 				if (getbit(s, i))
-						printf("%u\n", i);
+						printf("%llu\n", i);
 		}
 }
 
