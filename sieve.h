@@ -7,8 +7,8 @@
 typedef unsigned char sievemember_t;
 typedef sievemember_t*  sieve_t;
 
-sievemember_t getbit(sieve_t s, size_t n);
-void          setbit(sieve_t s, size_t n, sievemember_t c);
+inline sievemember_t getbit(sieve_t s, size_t n);
+inline void          setbit(sieve_t s, size_t n, sievemember_t c);
 
 const sievemember_t PRIME      = 1;
 const sievemember_t NOTPRIME   = 0;
@@ -59,13 +59,13 @@ sieve(size_t max){
 		return numbers;
 }
 
-sievemember_t
+inline sievemember_t
 getbit(sieve_t s, size_t n){
 		/*	Returns the n'th bit of sieve s	*/
 		return (s[n/8]) & (1 << (n%8));
 }
 
-void
+inline void
 setbit(sieve_t s, size_t n, sievemember_t c){
 		/*	Sets the n'th bit of sieve s to value c	*/
 		if (!c)
