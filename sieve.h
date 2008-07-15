@@ -29,7 +29,6 @@ sieve(size_t max){
 
 		//assume all numbers are prime before sieving
 		memset(numbers, PRIME, max+1);
-
 		numbers[0] = NOTPRIME;//remove 0, as it isn't prime
 		numbers[1] = NOTPRIME;//ditto  1
 
