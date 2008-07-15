@@ -30,6 +30,9 @@ ex. 'gcc -std=c99 -lm -OBIGNUM my_sieve_prog.c'
 
 PERFORMANCE:
 The sieve routine is relatively fast, and scales well ( O(n), or damned close).
+Performance is more sensitive to optimization flags (-O3 in particular) than
+previous versions.
+
 Some data from my machine ( C2D E6400 @2.67GHz, 2GB DDR):
 
 time ./sieve_test 10000000  > /dev/null :  0.220s real
