@@ -3,19 +3,20 @@
 #include <math.h>
 #include <errno.h>
 #include <limits.h>
+#include <stdint.h>
 
 typedef unsigned char sievemember_t;
 typedef sievemember_t*  sieve_t;
 
-inline sievemember_t getbit(sieve_t s, size_t n);
-inline void          setbit(sieve_t s, size_t n, sievemember_t c);
+inline sievemember_t getbit(sieve_t s, uint64_t n);
+inline void          setbit(sieve_t s, uint64_t n, sievemember_t c);
 
 const sievemember_t PRIME      = 1;
 const sievemember_t NOTPRIME   = 0;
 const sievemember_t BYTE_PRIME =  UCHAR_MAX;
 
 sieve_t
-sieve(size_t max){
+sieve(uint64_t max){
 		/*	
 		 *	Sieve uses sentinel value of 0 for nonprimes
 		 *	Starting at 0 and ending at max+1(necessitating the '+1's) was done
@@ -33,8 +34,8 @@ sieve(size_t max){
 		 *	of overloading operator[] in straight C, changes had to be made;
 		 *	unfortunately, access must now be through getbit()/setbit().
 		 */
-		size_t smax = (size_t)ceil(sqrt((double)max));
-		size_t amax = (max/8) + 1;//8 bits to a byte
+		uint64_t smax = (uint64_t)ceil(sqrt((double)max));
+		uint64_t amax = (max/8) + 1;//8 bits to a byte
 
 		sieve_t numbers = malloc((amax) * sizeof(sievemember_t));
 		if(NULL == numbers){
@@ -48,9 +49,9 @@ sieve(size_t max){
 		setbit(numbers, 1, NOTPRIME);//ditto  1
 
 		//sieve away
-		for(size_t i = 0; i < smax; ++i){
+		for(uint64_t i = 0; i < smax; ++i){
 				if (NOTPRIME != getbit(numbers, i)){
-						for(size_t j = i+i; j<max+1; j += i){
+						for(uint64_t j = i+i; j<max+1; j += i){
 								setbit(numbers, j, NOTPRIME);
 						}
 				}
@@ -60,13 +61,13 @@ sieve(size_t max){
 }
 
 inline sievemember_t
-getbit(sieve_t s, size_t n){
+getbit(sieve_t s, uint64_t n){
 		/*	Returns the n'th bit of sieve s	*/
 		return (s[n/8]) & (1 << (n%8));
 }
 
 inline void
-setbit(sieve_t s, size_t n, sievemember_t c){
+setbit(sieve_t s, uint64_t n, sievemember_t c){
 		/*	Sets the n'th bit of sieve s to value c	*/
 		if (!c)
 				s[n/8] &= ~(1 << (n%8));

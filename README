@@ -44,6 +44,5 @@ larger than that and swap space has to be used, things grind to a near-halt.
 Trying to operate on a dataset larger than the number of bits of available
 virtual memory, on the other hand, will cause the memory allocation at the
 beginning of sieve() to fail, with perror(3) and exit(3) being called as a
-result.  Finally, all sizes are handled internally using size_t; thus, if you
-are on a typical 32-bit machine, incorrect behavior will occur if the sieve's
-size is greater than about 4 billion.
+result.  All sizes are handled internally as unsigned long long ints, which
+should be a 64-bit type on all architectures.
