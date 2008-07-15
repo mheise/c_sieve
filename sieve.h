@@ -27,6 +27,7 @@ sieve(size_t max){
 		 */
 		const sievemember_t PRIME    = 1;
 		const sievemember_t NOTPRIME = 0;
+		size_t smax = (size_t)ceil(sqrt((double)max));
 
 		sieve_t numbers = malloc((max+1) * sizeof(sievemember_t));
 		if(NULL == numbers){
@@ -40,7 +41,7 @@ sieve(size_t max){
 		numbers[1] = NOTPRIME;//ditto  1
 
 		//sieve away
-		for(size_t i = 0; i < (size_t)ceil(sqrt((double)max)); ++i){
+		for(size_t i = 0; i < smax; ++i){
 				if (numbers[i] != NOTPRIME){
 						for(size_t j = i+i; j<max+1; j += i){
 								numbers[j] = NOTPRIME;
