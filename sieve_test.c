@@ -5,7 +5,7 @@
 
 void print_sieve(sieve_t s, size_t max){
 		for(size_t i=0; i<max+1; ++i){
-				if(s[i])
+				if (getbit(s, i))
 						printf("%u\n", i);
 		}
 }

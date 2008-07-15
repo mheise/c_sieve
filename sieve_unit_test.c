@@ -17,7 +17,7 @@ int main(void){
 
 		//sieve produces correct results
 		for(int i=0; i<MAX_NUM; ++i){
-				if(my_sieve[i])
+				if (getbit(my_sieve, i))
 						sum += i;
 		}
 		assert(CORRECT_SUM == sum);
