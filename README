@@ -30,11 +30,12 @@ ex. 'gcc -std=c99 -lm -OBIGNUM my_sieve_prog.c'
 
 PERFORMANCE:
 The sieve routine is relatively fast, and scales well ( O(n), or damned close).
+There is a performance hit (<15%) doing 64-bit arithmetic on 32-bit machines.
 Some data from my machine ( C2D E6400 @2.67GHz, 2GB DDR):
 
-time ./sieve_test 10000000  > /dev/null :  0.220s real
-time ./sieve_test 100000000 > /dev/null :  4.079s real
-time ./sieve_test 500000000 > /dev/null : 22.845s real
+time ./sieve_test 10000000  > /dev/null :  0.284s real
+time ./sieve_test 100000000 > /dev/null :  4.602s real
+time ./sieve_test 500000000 > /dev/null : 28.334s real
 
 
 LIMITATIONS:
