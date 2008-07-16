@@ -22,6 +22,7 @@ int main(void){
 		}
 		assert(CORRECT_SUM == sum);
 
+		free(my_sieve);
 		puts("All tests passed!\n");
 		return EXIT_SUCCESS;
 }
