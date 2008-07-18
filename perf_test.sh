@@ -1,6 +1,6 @@
 #!/bin/bash
 
-gcc -std=c99 -Wall -lm -O2 -pthread -s -march=native sieve_test.c
+gcc -std=c99 -Wall -lm -O2 -fgnu89-inline -pthread -s -march=native sieve_test.c
 printf '\nTen million:'
 time ./a.out 10000000 > /dev/null
 printf '\nFifty million:'

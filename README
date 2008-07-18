@@ -1,7 +1,8 @@
-Documentation for ~/src/euler/inc/sieve*
+Documentation for c_sieve
 
 Contact info:  kaesees@gmail.com
-Last Update:   07 Jul 2008
+Last Update:   15 Jul 2008
+
 
 
 USAGE:
@@ -10,9 +11,12 @@ USAGE:
 sieve_t my_sieve;
 my_sieve = sieve(size_of_sieve);//expensive
 /*	do stuff w/ sieve here - 
- *  each element of the dynamic array 'my_sieve'
+ *  each bit of the dynamic array 'my_sieve'
  *	contains a boolean value for whether the
  *	corresponding number is prime
+ *  
+ *  Note access must be done via getbit() and
+ *  setbit()
  */
 free(my_sieve);
 
@@ -28,16 +32,18 @@ PERFORMANCE:
 The sieve routine is relatively fast, and scales well ( O(n), or damned close).
 Some data from my machine ( C2D E6400 @2.67GHz, 2GB DDR):
 
-time ./sieve_test 10000000 > /dev/null : .520s real
-time ./sieve_test 100000000 > /dev/null : 5.99s real
-time ./sieve_test 500000000 > /dev/null : 32.01s real
+time ./sieve_test 10000000  > /dev/null :  0.220s real
+time ./sieve_test 100000000 > /dev/null :  4.079s real
+time ./sieve_test 500000000 > /dev/null : 22.845s real
 
 
 LIMITATIONS:
 In its current configuration, the sieve routine is fast when the dataset is
-smaller than the number of bytes of available RAM; when your dataset gets
+smaller than the number of bits of available RAM; when your dataset gets
 larger than that and swap space has to be used, things grind to a near-halt.
-Trying to operate on a dataset larger than the number of bytes of available
+Trying to operate on a dataset larger than the number of bits of available
 virtual memory, on the other hand, will cause the memory allocation at the
 beginning of sieve() to fail, with perror(3) and exit(3) being called as a
-result.
+result.  Finally, all sizes are handled internally using size_t; thus, if you
+are on a typical 32-bit machine, incorrect behavior will occur if the sieve's
+size is greater than about 4 billion.

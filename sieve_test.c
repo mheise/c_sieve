@@ -5,7 +5,7 @@
 
 void print_sieve(sieve_t s, size_t max){
 		for(size_t i=0; i<max+1; ++i){
-				if(s[i])
+				if (getbit(s, i))
 						printf("%u\n", i);
 		}
 }
@@ -13,7 +13,9 @@ void print_sieve(sieve_t s, size_t max){
 int main(int argc, char **argv){
 		assert(2 == argc);
 
-		size_t max = strtoul(argv[1], NULL, 0);
+		unsigned long long max = strtoull(argv[1], NULL, 0);
+		assert(max < UINT_MAX);
+
 		sieve_t my_sieve = sieve(max);
 		print_sieve(my_sieve, max);
 		free(my_sieve);

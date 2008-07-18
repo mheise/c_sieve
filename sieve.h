@@ -3,14 +3,11 @@
 #include <math.h>
 #include <errno.h>
 #include <pthread.h>
-
-#define NUM_THREADS 2
+#include <limits.h>
 
 typedef unsigned char sievemember_t;
 typedef sievemember_t*  sieve_t;
 
-const sievemember_t PRIME    = 1;
-const sievemember_t NOTPRIME = 0;
 
 struct arg_set{
 		size_t min;
@@ -19,9 +16,19 @@ struct arg_set{
 		sieve_t dataptr;
 };
 
+/*	multithreading funcs	*/
 void *worker(void *args);
 void divy_work(struct arg_set *args, size_t threadnum, size_t max);
 size_t correct_min(size_t sieved_num, size_t min);
+
+/*	bit operation funcs	*/
+inline sievemember_t getbit(sieve_t s, size_t n);
+inline void          setbit(sieve_t s, size_t n, sievemember_t c);
+
+const sievemember_t PRIME       = 1;
+const sievemember_t NOTPRIME    = 0;
+const sievemember_t BYTE_PRIME  =  UCHAR_MAX;
+const char          NUM_THREADS = 2;
 
 sieve_t
 sieve(size_t max){
@@ -34,31 +41,35 @@ sieve(size_t max){
 		 *	Note that this function returns a structure allocated on the heap,
 		 *	make sure to free it appropriately.
 		 *
-		 *	MULTITHREAD VERSION: As SMP capability is added, my intention is for
-		 *	the vanilla and pthread versions of this library be identical from a
-		 *	user/interface perspective; as such, "sieve_test.c" should be
-		 *	identical in all branches.
+		 *	BIT REPRESENTATION VERSION: As the structure was changed to represent
+		 *	numbers internally as bits rather than bytes, it was intended that
+		 *	the library would remain unchanged from a user/interface
+		 *	perspective, and that "sieve_test.c" would remain unchanged between
+		 *	the vanilla and bitwise versions.  However, due to the impossibility
+		 *	of overloading operator[] in straight C, changes had to be made;
+		 *	unfortunately, access must now be through getbit()/setbit().
 		 */
 
 		pthread_t threads[NUM_THREADS];
 		struct arg_set args;
 		size_t smax = (size_t)ceil(sqrt((double)max));
+		size_t amax = (max/8) + 1;//8 bits to a byte
 
-		sieve_t numbers = malloc((max+1) * sizeof(sievemember_t));
+		sieve_t numbers = malloc((amax) * sizeof(sievemember_t));
 		if(NULL == numbers){
 				perror("Couldn't malloc enough for sieve");
 				exit(EXIT_FAILURE);
 		}
 
 		//assume all numbers are prime before sieving
-		memset(numbers, PRIME, max+1);
-		numbers[0] = NOTPRIME;//remove 0, as it isn't prime
-		numbers[1] = NOTPRIME;//ditto  1
+		memset(numbers, BYTE_PRIME, amax);
+		setbit(numbers, 0, NOTPRIME);//remove 0, as it isn't prime
+		setbit(numbers, 1, NOTPRIME);//ditto  1
 		args.dataptr = numbers;
 
 		//sieve away - note inner loop parallelized
 		for(size_t i = 0; i < smax; ++i){
-				if (numbers[i] != NOTPRIME){
+				if (NOTPRIME != getbit(numbers, i)){
 						//spawn our workers
 						args.sieved_num = i;
 						for(size_t i=0; i<NUM_THREADS; ++i){
@@ -92,7 +103,7 @@ worker(void *args){
 		sieve_t numbers = myargs->dataptr;
 
 		for(size_t j = correct_min(sieved_num, min); j<max; j += sieved_num){
-				numbers[j] = NOTPRIME;
+				setbit(numbers, j, NOTPRIME);
 		}
 
 		pthread_exit(NULL);
@@ -114,4 +125,19 @@ correct_min(size_t sieved_num, size_t min){
 		}else{
 				return (min/sieved_num) * sieved_num;
 		}
+}
+
+inline void
+setbit(sieve_t s, size_t n, sievemember_t c){
+		/*	Sets the n'th bit of sieve s to value c	*/
+		if (!c)
+				s[n/8] &= ~(1 << (n%8));
+		else
+				s[n/8] |= (1 << (n%8));
+}
+
+inline sievemember_t
+getbit(sieve_t s, size_t n){
+		/*	Returns the n'th bit of sieve s	*/
+		return (s[n/8]) & (1 << (n%8));
 }
