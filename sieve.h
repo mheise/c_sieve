@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <pthread.h>
 #include <limits.h>
+#include <stdio.h>
 
 typedef unsigned char sievemember_t;
 typedef sievemember_t*  sieve_t;
