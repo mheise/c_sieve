@@ -26,13 +26,14 @@ sieve(size_t max){
 		 *	Note that this function returns a structure allocated on the heap,
 		 *	make sure to free it appropriately.
 		 *
-		 *	BIT REPRESENTATION VERSION: As the structure was changed to represent
-		 *	numbers internally as bits rather than bytes, it was intended that
-		 *	the library would remain unchanged from a user/interface
-		 *	perspective, and that "sieve_test.c" would remain unchanged between
-		 *	the vanilla and bitwise versions.  However, due to the impossibility
-		 *	of overloading operator[] in straight C, changes had to be made;
-		 *	unfortunately, access must now be through getbit()/setbit().
+		 *	BIT REPRESENTATION VERSION: As the structure was changed to 
+		 *	represent numbers internally as bits rather than bytes, it was
+		 *	intended that the library would remain unchanged from a user and
+		 *	interface perspective, and that "sieve_test.c" would remain 
+		 *	unchanged between the vanilla and bitwise versions.  However, due
+		 *	to the impossibility of overloading operator[] in straight C,
+		 *	changes had to be made; unfortunately, access must now be through
+		 *	getbit()/setbit().
 		 */
 		size_t smax = (size_t)ceil(sqrt((double)max));
 		size_t amax = (max/8) + 1;//8 bits to a byte
@@ -72,5 +73,5 @@ setbit(sieve_t s, size_t n, sievemember_t c){
 		if (!c)
 				s[n/8] &= ~(1 << (n%8));
 		else
-				s[n/8] |= (1 << (n%8));
+				s[n/8] |=  (1 << (n%8));
 }
