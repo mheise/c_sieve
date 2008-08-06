@@ -34,7 +34,6 @@ const char          NUM_THREADS = 2;
 sieve_t
 sieve(size_t max){
 		/*	
-		 *	Sieve uses sentinel value of 0 for nonprimes
 		 *	Starting at 0 and ending at max+1(necessitating the '+1's) was done
 		 *	to simplify other calculations (it lets the index correspond to the
 		 *	number represented)
@@ -42,14 +41,8 @@ sieve(size_t max){
 		 *	Note that this function returns a structure allocated on the heap,
 		 *	make sure to free it appropriately.
 		 *
-		 *	BIT REPRESENTATION VERSION: As the structure was changed to 
-		 *	represent numbers internally as bits rather than bytes, it was
-		 *	intended that the library would remain unchanged from a user and
-		 *	interface perspective, and that "sieve_test.c" would remain 
-		 *	unchanged between the vanilla and bitwise versions.  However, due
-		 *	to the impossibility of overloading operator[] in straight C,
-		 *	changes had to be made; unfortunately, access must now be through
-		 *	getbit()/setbit().
+		 *	Note that access to this structure should be through
+		 *	getbit()/setbit
 		 */
 
 		pthread_t threads[NUM_THREADS];
